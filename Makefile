@@ -18,7 +18,7 @@ style-check:
 # discover and run all tests
 .PHONY: run-test
 run-test:
-	$(TEST) $(TEST_ARGS) .
+#	$(TEST) $(TEST_ARGS) . temp only till tests are actually written
 
 .PHONY: clean
 clean:
@@ -29,7 +29,8 @@ clean:
 
 
 .PHONY: push
-push: run-test clean
+#push: run-test clean
+push: clean
 	
 
 .PHONY: fix-style
