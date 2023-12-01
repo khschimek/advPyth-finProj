@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request
 from app.weather import main as get_weather
 
