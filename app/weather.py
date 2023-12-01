@@ -5,8 +5,12 @@
 
 
 import requests
-from decouple import config
+from dotenv import load_dotenv
+import os
 from dataclasses import dataclass
+
+load_dotenv()
+API_KEY = os.getenv('API_KEY')
 
 
 @dataclass
@@ -15,9 +19,6 @@ class WeatherData:
     description: str
     icon: str
     temperature: str
-
-
-API_KEY = config('API_KEY', default='YOUR_DEFAULT_API_KEY')
 
 
 def get_lat_long(city_name, state_code, country_code, API_key):
