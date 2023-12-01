@@ -7,3 +7,6 @@ flake8
 autopep8
 lxml
 requests
+python-decouple
+flask
+python-dotenv

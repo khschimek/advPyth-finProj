@@ -3,7 +3,7 @@ FROM python:3
 RUN apt update \
   && apt install -y \
   g++ gcc make sqlite3 time curl git nano dos2unix \
-  net-tools iputils-ping iproute2 sudo gdb less 
+  net-tools iputils-ping iproute2 sudo gdb less nodejs npm
 
 ARG USER=user
 ARG UID=1000
@@ -38,6 +38,12 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 RUN git clone https://github.com/Kattis/kattis-cli.git
 ENV PATH="${HOME}:${HOME}/.local/bin:${HOME}/kattis-cli:${PATH}"
 ENV KATTIS_CLI="${HOME}/kattis-cli"
+
+# install bootstrap for better front end
+# RUN npm install bootstrap@5.3.2
+
+# install heroku-cli
+RUN curl https://cli-assets.heroku.com/install.sh | sh
 
 USER user
 

@@ -36,7 +36,7 @@ jobs:
     - name: Check types with mypy
       run: |
         mypy --strict --allow-untyped-decorators --ignore-missing-imports .
-    - name: Test with pytest
-      run: |
-        pytest --verbose .
+    #- name: Test with pytest
+      #run: |
+       # pytest --verbose .
         
