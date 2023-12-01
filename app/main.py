@@ -1,17 +1,21 @@
 import os
 from flask import Flask, render_template, request
 from app.weather import main as get_weather
+from typing import Optional, Any
 
 app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def index():
-    data = None
+def index() -> str:
+    data: Optional[Any] = None
     if request.method == 'POST':
-        city = request.form.get('cityName')
-        state = request.form.get('stateName')
-        country = request.form.get('countryName')
+        # Fallback to empty string if None
+        city = request.form.get('cityName') or ''
+        # Fallback to empty string if None
+        state = request.form.get('stateName') or ''
+        # Fallback to empty string if None
+        country = request.form.get('countryName') or ''
         data = get_weather(city, state, country)
     return render_template('index.html', data=data)
 
