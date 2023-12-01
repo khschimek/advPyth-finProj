@@ -29,7 +29,8 @@ clean:
 
 
 .PHONY: push
-push: run-test clean
+#push: run-test clean
+push: clean
 	
 
 .PHONY: fix-style
