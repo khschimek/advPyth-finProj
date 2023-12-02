@@ -55,3 +55,4 @@ if __name__ == "__main__":
     city, state, country = 'Grand Junction', 'CO', 'US'
     lat, lon = get_lat_long(city, state, country, API_KEY)
     print(get_current_weather(lat, lon, API_KEY))
+
