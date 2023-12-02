@@ -1,5 +1,6 @@
 """Settings for the app.
 """
+from typing import Dict, Any
 
 END_POINT = 'https://us-west-2.aws.data.mongodb-api.com/app/'
 END_POINT += 'data-qdbnx/endpoint/data/v1'
@@ -11,7 +12,7 @@ HEADERS = {'Content-Type': 'application/json',
            'Access-Control-Request-Headers': '*',
            'api-key': f'{API_KEY}'}
 
-PAYLOAD = {
+PAYLOAD: Dict[str, Any] = {
     "collection": COLLECTION,
     "database": DB_NAME,
     "dataSource": DATA_SOURCE
