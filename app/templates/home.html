@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=deveice-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover;">
+    <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
+        <div class="container-fluid">
+            <a class="navbar-brand">Python Weather App</a>
+            <form class="d-flex" action="/login">
+                <button class="btn btn-outline-light" type="submit">Login</button>
+            </form>
+        </div>
+    </nav>
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+        <form action="/dashboard" method="post" style="max-width: 400px;" class="w-100 d-flex justify-content-center">
+            <input class="form-control me-2" type="search" placeholder="City or Zip Code" id="cityName" name="cityName">
+            <button class="btn btn-outline-light">Search</button>
+        </form>
+    </div>
+    
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
-def index() -> str:
+def home() -> str:
     data: Optional[Any] = None
     if request.method == 'POST':
         # Fallback to empty string if None
@@ -18,7 +18,35 @@ def index() -> str:
         # Fallback to empty string if None
         country = request.form.get('countryName') or ''
         data = get_weather(city, state, country)
-    return render_template('index.html', data=data)
+    return render_template('home.html', data=data)
+
+
+@app.route('/dashboard', methods=['GET', 'POST'])
+def dashboard() -> str:
+    data: Optional[Any] = None
+    if request.method == 'POST':
+        # Fallback to empty string if None
+        city = request.form.get('cityName') or ''
+        # Fallback to empty string if None
+        state = request.form.get('stateName') or ''
+        # Fallback to empty string if None
+        country = request.form.get('countryName') or ''
+        data = get_weather(city, state, country)
+    return render_template('dashboard.html', data=data)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_user() -> str:
+    if request.method == 'POST':
+        user_data = {
+            "email": request.form.get('email'),
+            "password": request.form.get('password')
+        }
+        insert_data(user_data)
+        # Convert the response to a string if necessary
+        return render_template('login.html')
+    else:
+        return render_template('login.html')  # Show the form on GET request
 
 
 @app.route('/register', methods=['GET', 'POST'])
