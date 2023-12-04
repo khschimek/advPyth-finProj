@@ -1,5 +1,5 @@
 import requests
-from .settings import END_POINT, HEADERS, PAYLOAD
+from settings import END_POINT, HEADERS, PAYLOAD
 from typing import Dict, Any
 
 
