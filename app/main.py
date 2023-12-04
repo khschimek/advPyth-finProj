@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from weather import main as get_weather
 from typing import Optional, Any
 from database_operations import insert_data
+import json
 
 app = Flask(__name__)
 
@@ -18,6 +19,14 @@ def home() -> str:
         # Fallback to empty string if None
         country = request.form.get('countryName') or ''
         data = get_weather(city, state, country)
+    nyData = get_weather("new york city", "ny", "usa")
+    data.ny = nyData.temperature
+    chData = get_weather("chicago", "il", "usa")
+    data.ch = chData.temperature
+    deData = get_weather("denver", "co", "usa")
+    data.de = deData.temperature
+    laData = get_weather("los angeles", "ca", "usa")
+    data.la = laData.temperature
     return render_template('home.html', data=data)
 
 
@@ -32,6 +41,14 @@ def dashboard() -> str:
         # Fallback to empty string if None
         country = request.form.get('countryName') or ''
         data = get_weather(city, state, country)
+    nyData = get_weather("new york city", "ny", "usa")
+    data.ny = nyData.temperature
+    chData = get_weather("chicago", "il", "usa")
+    data.ch = chData.temperature
+    deData = get_weather("denver", "co", "usa")
+    data.de = deData.temperature
+    laData = get_weather("los angeles", "ca", "usa")
+    data.la = laData.temperature
     return render_template('dashboard.html', data=data)
 
 

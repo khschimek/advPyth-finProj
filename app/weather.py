@@ -14,6 +14,10 @@ class WeatherData:
     description: str
     icon: str
     temperature: float
+    ny: float
+    ch: float
+    de: float
+    la: float
 
 
 def get_lat_long(city_name: str, state_code: str, country_code: str,
@@ -40,7 +44,11 @@ def get_current_weather(
         main=resp.get('weather')[0].get('main'),
         description=resp.get('weather')[0].get('description'),
         icon=resp.get('weather')[0].get('icon'),
-        temperature=resp.get('main').get('temp')
+        temperature=resp.get('main').get('temp'),
+        ny=None,
+        ch=None,
+        de=None,
+        la=None
     )
     return data
 
