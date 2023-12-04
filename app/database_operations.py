@@ -16,17 +16,21 @@ def insert_data(data: Dict[str, Any]) -> Any:
     return response.json()
 
 
-def find_data(query: Dict[str, Any]) -> Any:
+def find_data(query: Dict[str, Any]) -> bool:
     """
-    Query data from the MongoDB collection.
+    Query data from the MongoDB collection to check existence.
     :param query: Dictionary representing the query to be executed.
-    :return: Response from the database.
+    :return: True if data exists, False otherwise.
     """
     url = f"{END_POINT}/action/find"
     payload = PAYLOAD.copy()
     payload['filter'] = query
     response = requests.post(url, json=payload, headers=HEADERS)
-    return response.json()
+    data = response.json()
+
+    # Check for the presence of documents in the response
+    return bool(data.get('documents'))
+    # 'documents' typically contains the query results
 
 
 def update_data(filter: Dict[str, Any], update: Dict[str, Any]) -> Any:

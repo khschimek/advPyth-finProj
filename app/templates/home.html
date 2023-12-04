@@ -16,11 +16,11 @@
     <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
         <div class="container-fluid">
             <a class="navbar-brand">Python Weather App</a>
-            <div class="weather-info">
+            <div class="weather-info d-none d-lg-block">
                 <p>New York City</p>
                 <p>{{ weather_data['ny'].temperature | round | int }}°F</p>
             </div>
-            <div class="weather-info">
+            <div class="weather-info d-none d-lg-block">
                 <p>Chicago</p>
                 <p>{{ weather_data['ch'].temperature | round | int }}°F</p>
             </div>
@@ -28,11 +28,11 @@
                 <input class="form-control me-2" type="search" placeholder="City Name" id="cityName" name="cityName">
                 <button class="btn btn-outline-light">Search</button>
             </form>
-            <div class="weather-info">
+            <div class="weather-info d-none d-lg-block">
                 <p>Denver</p>
                 <p>{{ weather_data['de'].temperature | round | int }}°F</p>
             </div>
-            <div class="weather-info">
+            <div class="weather-info d-none d-lg-block">
                 <p>Los Angeles</p>
                 <p>{{ weather_data['la'].temperature | round | int }}°F</p>
             </div>

@@ -1,8 +1,11 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
+from flask import url_for, Response as FlaskResponse
+from werkzeug.wrappers import Response as WerkzeugResponse
 from . weather import main as get_weather
-from typing import Optional, Any
-from . database_operations import insert_data
+from typing import Optional, Any, Union
+from . database_operations import insert_data, find_data
+from passlib.hash import pbkdf2_sha256
 
 app = Flask(__name__)
 
@@ -60,20 +63,49 @@ def login_user() -> str:
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def register_user() -> str:
+def register_user() -> Union[str, FlaskResponse, WerkzeugResponse]:
     if request.method == 'POST':
         user_data = {
             "first_name": request.form.get('fname'),
             "last_name": request.form.get('lname'),
+            "username": request.form.get('username'),
             "email": request.form.get('email'),
-            # Be cautious with password handling
             "password": request.form.get('password')
         }
-        insert_data(user_data)
-        # Convert the response to a string if necessary
+
+        # Check if email or username already exists
+        email_exists = find_data({"email": user_data["email"]})
+        username_exists = find_data({"username": user_data["username"]})
+
+        if email_exists or username_exists:
+            # Redirect to 'testing' page if email or username exists
+            return redirect(url_for('registererror'))
+
+        if user_data["password"] is None:
+            return redirect(url_for('register_user'))
+
+        # If email and username are unique, hash password and create a new user
+        user_data["password"] = pbkdf2_sha256.hash(user_data["password"])
+        response = insert_data(user_data)
+
+        # Check if the user was successfully inserted
+        if response.get('insertedId'):
+            # Redirect to the 'testing' page
+            return redirect(url_for('registersuccess'))
+
         return render_template('register.html')
     else:
         return render_template('register.html')  # Show the form on GET request
+
+
+@app.route('/registererror')
+def registererror() -> str:
+    return render_template('registererror.html')
+
+
+@app.route('/registersuccess')
+def registersuccess() -> str:
+    return render_template('registersuccess.html')
 
 
 if __name__ == "__main__":
