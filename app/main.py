@@ -3,21 +3,21 @@ from flask import Flask, render_template, request
 from weather import main as get_weather
 from typing import Optional, Any
 from database_operations import insert_data
-import json
 
 app = Flask(__name__)
 
-
+'''
+This was not working with loading the other temperatures
 @app.route('/', methods=['GET', 'POST'])
 def home() -> str:
     data: Optional[Any] = None
     if request.method == 'POST':
         # Fallback to empty string if None
-        city = request.form.get('cityName') or ''
+        city = request.form.get('grand junction') or ''
         # Fallback to empty string if None
-        state = request.form.get('stateName') or ''
+        state = request.form.get('co') or ''
         # Fallback to empty string if None
-        country = request.form.get('countryName') or ''
+        country = request.form.get('usa') or ''
         data = get_weather(city, state, country)
     nyData = get_weather("new york city", "ny", "usa")
     data.ny = nyData.temperature
@@ -28,7 +28,20 @@ def home() -> str:
     laData = get_weather("los angeles", "ca", "usa")
     data.la = laData.temperature
     return render_template('home.html', data=data)
-
+'''
+@app.route('/', methods=['GET', 'POST'])
+def home() -> str:
+    data: Optional[Any] = None
+    data = get_weather('grand junction', 'co', 'usa')
+    nyData = get_weather("new york city", "ny", "usa")
+    data.ny = nyData.temperature
+    chData = get_weather("chicago", "il", "usa")
+    data.ch = chData.temperature
+    deData = get_weather("denver", "co", "usa")
+    data.de = deData.temperature
+    laData = get_weather("los angeles", "ca", "usa")
+    data.la = laData.temperature
+    return render_template('home.html', data=data)
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard() -> str:
