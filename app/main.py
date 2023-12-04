@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from . weather import main as get_weather
 from typing import Optional, Any
 from . database_operations import insert_data
+from passlib.hash import sha256_crypt
 
 app = Flask(__name__)
 
@@ -69,6 +70,7 @@ def register_user() -> str:
             # Be cautious with password handling
             "password": request.form.get('password')
         }
+        user_data['password'] = sha256_crypt.hash(user_data['password'])
         insert_data(user_data)
         # Convert the response to a string if necessary
         return render_template('register.html')
