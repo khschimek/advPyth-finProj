@@ -1,9 +1,7 @@
 import os
-from flask import Flask, render_template, request, redirect
-from flask import url_for, Response as FlaskResponse
-from werkzeug.wrappers import Response as WerkzeugResponse
+from flask import Flask, render_template, request, redirect, url_for
 from . weather import main as get_weather
-from typing import Optional, Any, Union
+from typing import Optional, Any
 from . database_operations import insert_data, find_data
 from passlib.hash import pbkdf2_sha256
 
@@ -63,7 +61,7 @@ def login_user() -> str:
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def register_user() -> Union[str, FlaskResponse, WerkzeugResponse]:
+def register_user() -> str:
     if request.method == 'POST':
         user_data = {
             "first_name": request.form.get('fname'),
@@ -81,9 +79,6 @@ def register_user() -> Union[str, FlaskResponse, WerkzeugResponse]:
             # Redirect to 'testing' page if email or username exists
             return redirect(url_for('registererror'))
 
-        if user_data["password"] is None:
-            return redirect(url_for('register_user'))
-
         # If email and username are unique, hash password and create a new user
         user_data["password"] = pbkdf2_sha256.hash(user_data["password"])
         response = insert_data(user_data)
@@ -92,7 +87,7 @@ def register_user() -> Union[str, FlaskResponse, WerkzeugResponse]:
         if response.get('insertedId'):
             # Redirect to the 'testing' page
             return redirect(url_for('registersuccess'))
-
+        
         return render_template('register.html')
     else:
         return render_template('register.html')  # Show the form on GET request
@@ -101,11 +96,12 @@ def register_user() -> Union[str, FlaskResponse, WerkzeugResponse]:
 @app.route('/registererror')
 def registererror() -> str:
     return render_template('registererror.html')
-
+    # Replace with a proper HTML template if necessary
 
 @app.route('/registersuccess')
 def registersuccess() -> str:
     return render_template('registersuccess.html')
+    # Replace with a proper HTML template if necessary
 
 
 if __name__ == "__main__":

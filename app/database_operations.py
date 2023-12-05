@@ -1,6 +1,6 @@
 import requests
 from . settings import END_POINT, HEADERS, PAYLOAD
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 
 def insert_data(data: Dict[str, Any]) -> Any:
@@ -16,11 +16,11 @@ def insert_data(data: Dict[str, Any]) -> Any:
     return response.json()
 
 
-def find_data(query: Dict[str, Any]) -> bool:
+def find_data(query: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
-    Query data from the MongoDB collection to check existence.
+    Query data from the MongoDB collection.
     :param query: Dictionary representing the query to be executed.
-    :return: True if data exists, False otherwise.
+    :return: User data if it exists, None otherwise.
     """
     url = f"{END_POINT}/action/find"
     payload = PAYLOAD.copy()
@@ -28,9 +28,12 @@ def find_data(query: Dict[str, Any]) -> bool:
     response = requests.post(url, json=payload, headers=HEADERS)
     data = response.json()
 
-    # Check for the presence of documents in the response
-    return bool(data.get('documents'))
-    # 'documents' typically contains the query results
+    # Check if data is found and return it
+    if data.get('documents'):
+        # Assuming the first document in the 'documents' list is the user data
+        return data['documents'][0]
+    return None
+
 
 
 def update_data(filter: Dict[str, Any], update: Dict[str, Any]) -> Any:
