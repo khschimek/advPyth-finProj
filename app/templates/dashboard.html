@@ -12,7 +12,11 @@
         }
     </style>
 </head>
+{% if data.temperature is defined %}
+<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover; background-color: rgb(calc({{ data.temperature | round | int }}*3), 0, 170) !important;">
+{% else %}
 <body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover;">
+{% endif %}
     <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
         <div class="container-fluid">
             <a class="navbar-brand">Python Weather App</a>
@@ -86,3 +90,69 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
+
+<!--
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=deveice-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .weather-info p {
+            margin-bottom: 0; /* Reduces the bottom margin */
+            margin-top: 0; /* Reduces the top margin if needed */
+        }
+    </style>
+</head>
+<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover; background-color: rgb(calc({{ data.temperature | round | int }}*3), 0, 170) !important;">
+    <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
+        <div class="container-fluid">
+            <a class="navbar-brand">Python Weather App</a>
+            <div class="weather-info">
+                <p>New York City</p>
+                <p>{{ weather_data['ny'].temperature | round | int }}°F</p>
+            </div>
+            <div class="weather-info">
+                <p>Chicago</p>
+                <p>{{ weather_data['ch'].temperature | round | int }}°F</p>
+            </div>
+            <form class="d-flex flex-grow-1 mx-4" style="max-width: 400px;" action="/dashboard" method="post">
+                <input class="form-control me-2" type="search" placeholder="City Name" id="cityName" name="cityName">
+                <button class="btn btn-outline-light">Search</button>
+            </form>
+            <div class="weather-info">
+                <p>Denver</p>
+                <p>{{ weather_data['de'].temperature | round | int }}°F</p>
+            </div>
+            <div class="weather-info">
+                <p>Los Angeles</p>
+                <p>{{ weather_data['la'].temperature | round | int }}°F</p>
+            </div>
+            <form class="d-flex" action="/login">
+                <button class="btn btn-outline-light" type="submit">Login</button>
+            </form>
+        </div>
+    </nav>
+    <div class="text-center">
+        <h1 class="mt-5">Weather App</h1>
+        {% if data %}
+        {{ data.description }} <br>
+        <img src="https://openweathermap.org/img/wn/{{data.icon}}@2x.png" alt="Icon"> <br>
+        Temperature: {{data.temperature | round | int }}°F <br>
+        Feel: {{data.temperatureFeel | round | int }}°F <br>
+        Max Temperature: {{data.temperatureMax | round | int }}°F <br>
+        Min Temperature: {{data.temperatureMin | round | int }}°F <br>
+        Pressure: {{data.pressure | round | int }} <br>
+        Humidity: {{data.humidity | round | int }} <br>
+        Visibility: {{data.visibility | round | int }} <br>
+        Wind Speed: {{data.windSpeed | round | int }} <br>
+        Wind Angle: {{data.windDeg | round | int }} <br>
+
+        {% endif %}
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>
+-->
