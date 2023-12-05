@@ -3,6 +3,18 @@ import requests
 from dotenv import load_dotenv
 import os
 from dataclasses import dataclass
+from datetime import datetime, timedelta
+
+
+def convert_unix_to_readable(unix_timestamp: float,
+                             timezone_offset: float) -> str:
+    # Convert the Unix timestamp to a UTC datetime object
+    utc_datetime = datetime.utcfromtimestamp(unix_timestamp)
+    # Apply the timezone offset
+    local_datetime = utc_datetime + timedelta(seconds=timezone_offset)
+    # Format the datetime as a string
+    return local_datetime.strftime('%H:%M:%S')
+
 
 load_dotenv()
 API_KEY = os.getenv('API_KEY')
@@ -27,9 +39,10 @@ class WeatherData:
     rainThree: float
     snowOne: float
     snowThree: float
-    sunrise: float
-    sunset: float
     timezone: float
+    sunrise: str
+    sunset: str
+    name: str
 
 
 def get_lat_long(city_name: str, state_code: str, country_code: str,
@@ -52,6 +65,9 @@ def get_current_weather(
         raise ValueError("API key is not provided")
     resp = requests.get(f'http://api.openweathermap.org/data/2.5/weather?lat={
                         lat}&lon={lon}&appid={API_key}&units=imperial').json()
+
+    timezone_offset = resp.get('timezone')
+
     data = WeatherData(
         main=resp.get('weather')[0].get('main'),
         description=resp.get('weather')[0].get('description'),
@@ -63,12 +79,15 @@ def get_current_weather(
         humidity=resp.get('main').get('humidity'),
         pressure=resp.get('main').get('pressure'),
         visibility=resp.get('visibility'),
-        windSpeed=resp.get('wind').get('speed'),
-        windDeg=resp.get('wind').get('deg'),
-        windGust=resp.get('wind').get('gust'),
-        sunrise=resp.get('sys').get('sunrise'),
-        sunset=resp.get('sys').get('sunset'),
-        timezone=resp.get('timezone'),
+        windSpeed=resp.get('wind').get('speed', 0),
+        windDeg=resp.get('wind').get('deg', 0),
+        windGust=resp.get('wind').get('gust', 0),
+        timezone=timezone_offset,
+        sunrise=convert_unix_to_readable
+        (resp.get('sys').get('sunrise'), timezone_offset),
+        sunset=convert_unix_to_readable
+        (resp.get('sys').get('sunset'), timezone_offset),
+        name=resp.get('name'),
 
         # Check for rain and snow, default to None or 0 if not present
         rainOne=resp.get('rain', {}).get('1h', 0),

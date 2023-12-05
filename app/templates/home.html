@@ -15,7 +15,13 @@
 <body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover;">
     <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
         <div class="container-fluid">
-            <a class="navbar-brand">Python Weather App</a>
+            {% if current_user.is_authenticated %}
+                <p>Welcome, {{ current_user.first_name }}!</p>
+                <!-- Display content for logged-in users -->
+            {% else %}
+                <a class="navbar-brand">Python Weather App</a>
+                <!-- Display content for non-logged-in users -->
+            {% endif %}
             <div class="weather-info d-none d-lg-block">
                 <p>New York City</p>
                 <p>{{ weather_data['ny'].temperature | round | int }}°F</p>
@@ -37,9 +43,15 @@
                 <p>{{ weather_data['la'].temperature | round | int }}°F</p>
             </div>
             {% if current_user.is_authenticated %}
-            <form class="d-flex" action="/logout">
-                <button class="btn btn-outline-light" type="submit">Logout</button>
-            </form>
+            <div class="dropdown btn">
+                <button class="btn btn-secondary dropdown-toggle btn btn-outline-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #1e92bd;">
+                  Profile
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                    <li><a class="dropdown-item" href="/settings">Settings</a></li>
+                </ul>
+            </div>
             {% else %}
             <form class="d-flex" action="/login">
                 <button class="btn btn-outline-light" type="submit">Login</button>

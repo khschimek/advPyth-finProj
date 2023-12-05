@@ -12,14 +12,16 @@
         }
     </style>
 </head>
-{% if data.temperature is defined %}
-<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover; background-color: rgb(calc({{ data.temperature | round | int }}*3), 0, 170) !important;">
-{% else %}
-<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover;">
-{% endif %}
+<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover; background-color: rgb(calc({{ (data.temperature | default(0) | round | int) * 3 }}), 0, 170) !important;">
     <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
         <div class="container-fluid">
-            <a class="navbar-brand">Python Weather App</a>
+            {% if current_user.is_authenticated %}
+                <p>Welcome, {{ current_user.first_name }}!</p>
+                <!-- Display content for logged-in users -->
+            {% else %}
+                <a class="navbar-brand">Python Weather App</a>
+                <!-- Display content for non-logged-in users -->
+            {% endif %}
             
             <div class="weather-info">
                 <p>New York City</p>
@@ -45,9 +47,15 @@
             </div>
             
             {% if current_user.is_authenticated %}
-            <form class="d-flex" action="/logout">
-                <button class="btn btn-outline-light" type="submit">Logout</button>
-            </form>
+            <div class="dropdown btn">
+                <button class="btn btn-secondary dropdown-toggle btn btn-outline-light" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #1e92bd;">
+                  Profile
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                    <li><a class="dropdown-item" href="/settings">Settings</a></li>
+                </ul>
+            </div>
             {% else %}
             <form class="d-flex" action="/login">
                 <button class="btn btn-outline-light" type="submit">Login</button>
@@ -56,35 +64,69 @@
         </div>
     </nav>
     <div class="text-center">
-        <h1 class="mt-5">Weather App</h1>
+        <h1 class="mt-5">Weather for {{data.name}}</h1>
         {% if data %}
-        {{data.main}}: {{ data.description }} <br>
-        <img src="https://openweathermap.org/img/wn/{{data.icon}}@2x.png" alt="Icon">
-        {{data.temperature}} <br>
-        {{data.temperatureFeel}} <br>
-        {{data.temperatureMax}} <br>
-        {{data.temperatureMin}} <br>
-        {{data.pressure}} <br>
-        {{data.humidity}} <br>
-        {{data.visibility}} <br>
-        {{data.windSpeed}} <br>
-        {{data.windDeg}} <br>
-        {{data.windGust}} <br>
-        {{data.rainOne}} <br>
-        {{data.rainThree}} <br>
-        {{data.snowOne}} <br>
-        {{data.snowThree}} <br>
-        {{data.sunrise}} <br>
-        {{data.sunset}} <br>
-        {{data.timezone}}
-
-        {% endif %}
-            {% if current_user.is_authenticated %}
-                <p>Welcome, {{ current_user.username }}!</p>
-                <!-- Display content for logged-in users -->
-            {% else %}
-                <p>Please log in to see this content.</p>
-                <!-- Display content for non-logged-in users -->
+        <div class="row justify-content-center">
+            <!-- First Card -->
+            <div class="col-md-3">
+                <div class="card mx-auto rounded bg-light bg-gradient" style="width: 20rem;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img src="https://openweathermap.org/img/wn/{{data.icon}}@2x.png" class="img-fluid rounded bg-light bg-gradient" alt="Weather Icon" style="max-width: 100px; margin: auto;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body rounded bg-light bg-gradient">
+                                <h5 class="card-title">{{ data.main }}</h5>
+                                <p class="card-text">{{ data.description }}</p>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item rounded bg-light bg-gradient">Temperature: {{ data.temperature | round | int }}°F</li>
+                                    <li class="list-group-item rounded bg-light bg-gradient">High: {{ data.temperatureMax | round | int }}°F</li>
+                                    <li class="list-group-item rounded bg-light bg-gradient">Low: {{ data.temperatureMin | round | int }}°F</li>
+                                    <li class="list-group-item rounded bg-light bg-gradient">Feels Like: {{ data.temperatureFeel | round | int }}°F</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <!-- Second Card -->
+                <div class="card mx-auto rounded bg-light bg-gradient" style="width: 20rem;">
+                    <div class="card-body rounded bg-light bg-gradient">
+                        <h5 class="card-title">Wind & Visibility</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item rounded bg-light bg-gradient">Wind Speed: {{ data.windSpeed  | round | int }} mph</li>
+                            <li class="list-group-item rounded bg-light bg-gradient">Wind Gusts: {{ data.windGust  | round | int }} mph</li>
+                            <li class="list-group-item rounded bg-light bg-gradient">Wind Direction: {{ data.windDeg }}°</li>
+                            <li class="list-group-item rounded bg-light bg-gradient">Visibility: {{ data.visibility }} meters</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h1 class="mt-5"></h1>
+        <div class="row justify-content-center">
+            <!-- Sunrise and Sunset Card -->
+            <div class="col-md-3">
+                <div class="card rounded bg-light bg-gradient">
+                    <div class="card-body">
+                        <h5 class="card-title">Sunrise & Sunset</h5>
+                        <p id="sunrise">Sunrise: {{data.sunrise}}</p>
+                        <p id="sunset">Sunset: {{data.sunset}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card rounded bg-light bg-gradient">
+                    <div class="card-body">
+                        <h5 class="card-title">Humidity & Pressure</h5>
+                        <p id="humidity">Humidity: {{data.humidity}}%</p>
+                        <p id="pressure">Pressure: {{data.pressure}} hPa</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         {% endif %}
     </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>

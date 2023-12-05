@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request
-from flask import redirect, url_for, session
+from flask import redirect, url_for
 from werkzeug.wrappers import Response
 from . weather import main as get_weather
 from typing import Optional, Any, Union
@@ -101,9 +101,8 @@ def login_route() -> Union[str, Response]:
                 user_data["username"],
                 user_data["email"])
             print(user_data)
-            session.permanent = True  # Note the spelling correction
             login_user(user, remember=True, force=True)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('home'))
         else:
             print("Login failed")  # Log failed login
             return render_template('login.html', error="Invalid credentials")
@@ -162,6 +161,12 @@ def registersuccess() -> str:
 def logout() -> str:
     logout_user()
     return render_template('logout.html')
+
+
+@app.route('/settings')
+@login_required
+def settings() -> str:
+    return render_template('settings.html')
 
 
 if __name__ == "__main__":
