@@ -44,25 +44,17 @@
     <div class="text-center">
         <h1 class="mt-5">Weather App</h1>
         {% if data %}
-        {{data.main}}: {{ data.description }} <br>
-        <img src="https://openweathermap.org/img/wn/{{data.icon}}@2x.png" alt="Icon">
-        {{data.temperature}} <br>
-        {{data.temperatureFeel}} <br>
-        {{data.temperatureMax}} <br>
-        {{data.temperatureMin}} <br>
-        {{data.pressure}} <br>
-        {{data.humidity}} <br>
-        {{data.visibility}} <br>
-        {{data.windSpeed}} <br>
-        {{data.windDeg}} <br>
-        {{data.windGust}} <br>
-        {{data.rainOne}} <br>
-        {{data.rainThree}} <br>
-        {{data.snowOne}} <br>
-        {{data.snowThree}} <br>
-        {{data.sunrise}} <br>
-        {{data.sunset}} <br>
-        {{data.timezone}}
+        {{ data.description }} <br>
+        <img src="https://openweathermap.org/img/wn/{{data.icon}}@2x.png" alt="Icon"> <br>
+        Temperature: {{data.temperature}} <br>
+        Feel: {{data.temperatureFeel}} <br>
+        Max Temperature: {{data.temperatureMax}} <br>
+        Min Temperature: {{data.temperatureMin}} <br>
+        Pressure: {{data.pressure}} <br>
+        Humidity: {{data.humidity}} <br>
+        Visibility: {{data.visibility}} <br>
+        Wind Speed: {{data.windSpeed}} <br>
+        Wind Angle: {{data.windDeg}} <br>
 
         {% endif %}
     </div>

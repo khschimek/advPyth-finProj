@@ -1,8 +1,8 @@
 import os
 from flask import Flask, render_template, request
-from . weather import main as get_weather
+from weather import main as get_weather
 from typing import Optional, Any
-from . database_operations import insert_data
+from database_operations import insert_data
 from passlib.hash import sha256_crypt
 
 app = Flask(__name__)
