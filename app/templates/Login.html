@@ -19,11 +19,11 @@
         <div class="card text-center" style="width: 21rem;">
             <div class="card-body rounded bg-light bg-gradient">
                 <h1 class="card-title">Login</h1>
-                    <form id="signupForm" action="/login" method="post">
+                    <form id="signupForm" method="post">
 
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            <label for="identifier" class="form-label">Username/Email</label>
+                            <input type="text" class="form-control" id="identifier" name="identifier" required>
                         </div>
 
                         <div class="mb-3">
@@ -40,7 +40,9 @@
                         </div>
 
                     </form>
-                <p id="output" style="margin-top: 20px;"></p> <!-- Output will be displayed here -->
+                    {% if error %}
+                    <p id="output" style="margin-top: 20px;">{{ error }}</p>
+                    {% endif %}
             </div>
         </div>
     </div>

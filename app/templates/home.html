@@ -41,6 +41,14 @@
             </form>
         </div>
     </nav>
+
+    {% if current_user.is_authenticated %}
+            <p>Welcome, {{ current_user.username }}!</p>
+            <!-- Display content for logged-in users -->
+        {% else %}
+            <p>Please log in to see this content.</p>
+            <!-- Display content for non-logged-in users -->
+    {% endif %}
     <!--
     <div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
         <form action="/dashboard" method="post" style="max-width: 400px;" class="w-100 d-flex justify-content-center">

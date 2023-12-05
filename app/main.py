@@ -1,14 +1,47 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from . weather import main as get_weather
 from typing import Optional, Any
 from . database_operations import insert_data, find_data
 from passlib.hash import pbkdf2_sha256
+from flask_login import login_user, current_user, UserMixin, LoginManager, login_required
+from datetime import timedelta
+from bson import ObjectId
 
 app = Flask(__name__)
+app.secret_key = 'your_very_secret_and_random_key_here'
+
+
+# Create an instance of LoginManager
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login_route'  # Name of the login route
 
 
 weather_data = {}
+
+class User(UserMixin):
+    def __init__(self, id, first_name, last_name, username, email):
+        self.id = str(id)  # Convert ObjectId to string
+        self.first_name = first_name
+        self.last_name = last_name
+        self.username = username
+        self.email = email
+
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    print(user_id)
+    user_data = find_data({"_id": ObjectId(user_id)})
+    print(user_data)
+    if user_data:
+        # Convert the ObjectId '_id' to a string
+        return User(str(user_data["_id"]), user_data["first_name"], user_data["last_name"], user_data["username"], user_data["email"])
+    return None
+
+
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -31,6 +64,7 @@ def home() -> str:
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
 def dashboard() -> str:
     data: Optional[Any] = None
     if request.method == 'POST':
@@ -47,21 +81,29 @@ def dashboard() -> str:
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login_user() -> str:
+def login_route():
     if request.method == 'POST':
-        user_data = {
-            "email": request.form.get('email'),
-            "password": request.form.get('password')
-        }
-        insert_data(user_data)
-        # Convert the response to a string if necessary
-        return render_template('login.html')
-    else:
-        return render_template('login.html')  # Show the form on GET request
+        identifier = request.form.get('identifier')
+        password = request.form.get('password') # Log identifier
+
+        user_data = find_data({"$or": [{"username": identifier}, {"email": identifier}]})
+
+        if user_data and pbkdf2_sha256.verify(password, user_data["password"]):
+            user = User(user_data["_id"], user_data["first_name"], user_data["last_name"], user_data["username"], user_data["email"])
+            print(user)
+            session.permanent = True  # Note the spelling correction
+            login_user(user, remember=True, force=True)
+            return redirect(url_for('dashboard'))
+        else:
+            print("Login failed")  # Log failed login
+            return render_template('login.html', error="Invalid credentials")
+
+    return render_template('login.html')
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def register_user() -> str:
+def register_user():
     if request.method == 'POST':
         user_data = {
             "first_name": request.form.get('fname'),
@@ -76,21 +118,19 @@ def register_user() -> str:
         username_exists = find_data({"username": user_data["username"]})
 
         if email_exists or username_exists:
-            # Redirect to 'testing' page if email or username exists
-            return redirect(url_for('registererror'))
+            # Handle registration error
+            return render_template('register.html', error="Email or username already exists")
 
-        # If email and username are unique, hash password and create a new user
         user_data["password"] = pbkdf2_sha256.hash(user_data["password"])
         response = insert_data(user_data)
 
-        # Check if the user was successfully inserted
         if response.get('insertedId'):
-            # Redirect to the 'testing' page
             return redirect(url_for('registersuccess'))
+
+        # Handle other errors
+        return render_template('register.html', error="Registration failed")
         
-        return render_template('register.html')
-    else:
-        return render_template('register.html')  # Show the form on GET request
+    return render_template('register.html')
 
 
 @app.route('/registererror')
