@@ -126,6 +126,36 @@
                 </div>
             </div>
         </div>
+        <div class="row justify-content-center">
+            <!-- Rain Card -->
+            {% if data.rainOne != 0 %}
+                {% if data.rainThree != 0 %}
+                    <div class="col-md-3">
+                        <div class="card rounded bg-light bg-gradient">
+                            <div class="card-body">
+                                <h5 class="card-title">Recent Rainfall</h5>
+                                <p id="sunrise">One hour: {{data.rainOne}}mm</p>
+                                <p id="sunset">Three hours: {{data.rainThree}}mm</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <!-- Rain Card -->
+            {% if data.snowOne != 0 %}
+                {% if data.snowThree != 0 %}
+                    <div class="col-md-3">
+                        <div class="card rounded bg-light bg-gradient">
+                            <div class="card-body">
+                                <h5 class="card-title">Recent SnowFall</h5>
+                                <p id="sunrise">One hour: {{data.snowone}}mm</p>
+                                <p id="sunset">Three hours: {{data.snowThree}}mm</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
         
         {% endif %}
     </div>
