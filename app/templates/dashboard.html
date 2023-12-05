@@ -46,15 +46,15 @@
         {% if data %}
         {{ data.description }} <br>
         <img src="https://openweathermap.org/img/wn/{{data.icon}}@2x.png" alt="Icon"> <br>
-        Temperature: {{data.temperature}} <br>
-        Feel: {{data.temperatureFeel}} <br>
-        Max Temperature: {{data.temperatureMax}} <br>
-        Min Temperature: {{data.temperatureMin}} <br>
-        Pressure: {{data.pressure}} <br>
-        Humidity: {{data.humidity}} <br>
-        Visibility: {{data.visibility}} <br>
-        Wind Speed: {{data.windSpeed}} <br>
-        Wind Angle: {{data.windDeg}} <br>
+        Temperature: {{data.temperature | round | int }}°F <br>
+        Feel: {{data.temperatureFeel | round | int }}°F <br>
+        Max Temperature: {{data.temperatureMax | round | int }}°F <br>
+        Min Temperature: {{data.temperatureMin | round | int }}°F <br>
+        Pressure: {{data.pressure | round | int }} <br>
+        Humidity: {{data.humidity | round | int }} <br>
+        Visibility: {{data.visibility | round | int }} <br>
+        Wind Speed: {{data.windSpeed | round | int }} <br>
+        Wind Angle: {{data.windDeg | round | int }} <br>
 
         {% endif %}
     </div>
