@@ -12,7 +12,7 @@
         }
     </style>
 </head>
-<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover;">
+<body class="bg-info bg-gradient text-white" style="background-repeat: no-repeat; background-size: cover; background-color: rgb({{ data.temperature | round | int }}, {{ data.temperature | round | int }}, 120) !important;">
     <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
         <div class="container-fluid">
             <a class="navbar-brand">Python Weather App</a>
