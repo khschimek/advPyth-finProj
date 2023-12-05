@@ -23,19 +23,23 @@ def find_data(query: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     :param query: Dictionary representing the query to be executed.
     :return: User data if it exists, None otherwise.
     """
-    # If the query includes an ObjectId, convert it to a string
     if '_id' in query and isinstance(query['_id'], ObjectId):
         query['_id'] = str(query['_id'])
+
     url = f"{END_POINT}/action/find"
     payload = PAYLOAD.copy()
     payload['filter'] = query
     response = requests.post(url, json=payload, headers=HEADERS)
     data = response.json()
 
-    if data.get('documents'):
-        user_data = data['documents'][0]
-        # Convert ObjectId to string if present
-        if '_id' in user_data:
-            user_data['_id'] = str(user_data['_id'])
-        return user_data
+    if 'documents' in data and isinstance(data['documents'], list):
+        if len(data['documents']) > 0:
+
+            user_data = data['documents'][0]
+            if isinstance(user_data, dict):
+                if '_id' in user_data:
+                    if isinstance(user_data['_id'], ObjectId):
+                        user_data['_id'] = str(user_data['_id'])
+                    return user_data
+
     return None

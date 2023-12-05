@@ -1,12 +1,13 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request
+from flask import redirect, url_for, session
+from werkzeug.wrappers import Response
 from . weather import main as get_weather
-from typing import Optional, Any
+from typing import Optional, Any, Union
 from . database_operations import insert_data, find_data
 from passlib.hash import pbkdf2_sha256
-from flask_login import login_user, current_user, UserMixin, LoginManager, login_required
-from datetime import timedelta
-from bson import ObjectId
+from flask_login import login_user, UserMixin, LoginManager
+from flask_login import login_required, logout_user
 
 app = Flask(__name__)
 app.secret_key = 'your_very_secret_and_random_key_here'
@@ -20,28 +21,31 @@ login_manager.login_view = 'login_route'  # Name of the login route
 
 weather_data = {}
 
+
 class User(UserMixin):
-    def __init__(self, id, first_name, last_name, username, email):
-        self.id = str(id)  # Convert ObjectId to string
+    def __init__(self, id: Any, first_name: str,
+                 last_name: str, username: str, email: str) -> None:
+        self.id = str(id)  # ID is still kept for reference
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
         self.email = email
 
+    def get_id(self) -> str:
+        # Override the method to return the username instead of the ID
+        return self.username
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    print(user_id)
-    user_data = find_data({"_id": ObjectId(user_id)})
-    print(user_data)
+def load_user(username: str) -> Optional[User]:
+    user_data = find_data({"username": username})
     if user_data:
-        # Convert the ObjectId '_id' to a string
-        return User(str(user_data["_id"]), user_data["first_name"], user_data["last_name"], user_data["username"], user_data["email"])
+        return User(user_data["_id"],
+                    user_data["first_name"],
+                    user_data["last_name"],
+                    user_data["username"],
+                    user_data["email"])
     return None
-
-
-
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -81,16 +85,22 @@ def dashboard() -> str:
 
 
 @app.route('/login', methods=['GET', 'POST'])
-def login_route():
+def login_route() -> Union[str, Response]:
     if request.method == 'POST':
         identifier = request.form.get('identifier')
-        password = request.form.get('password') # Log identifier
+        password = request.form.get('password')  # Log identifier
 
-        user_data = find_data({"$or": [{"username": identifier}, {"email": identifier}]})
+        user_data = find_data(
+            {"$or": [{"username": identifier}, {"email": identifier}]})
 
         if user_data and pbkdf2_sha256.verify(password, user_data["password"]):
-            user = User(user_data["_id"], user_data["first_name"], user_data["last_name"], user_data["username"], user_data["email"])
-            print(user)
+            user = User(
+                user_data["_id"],
+                user_data["first_name"],
+                user_data["last_name"],
+                user_data["username"],
+                user_data["email"])
+            print(user_data)
             session.permanent = True  # Note the spelling correction
             login_user(user, remember=True, force=True)
             return redirect(url_for('dashboard'))
@@ -101,9 +111,8 @@ def login_route():
     return render_template('login.html')
 
 
-
 @app.route('/register', methods=['GET', 'POST'])
-def register_user():
+def register_user() -> Union[str, Response]:
     if request.method == 'POST':
         user_data = {
             "first_name": request.form.get('fname'),
@@ -119,7 +128,9 @@ def register_user():
 
         if email_exists or username_exists:
             # Handle registration error
-            return render_template('register.html', error="Email or username already exists")
+            return render_template(
+                'register.html',
+                error="Email or username already exists")
 
         user_data["password"] = pbkdf2_sha256.hash(user_data["password"])
         response = insert_data(user_data)
@@ -129,7 +140,7 @@ def register_user():
 
         # Handle other errors
         return render_template('register.html', error="Registration failed")
-        
+
     return render_template('register.html')
 
 
@@ -138,10 +149,19 @@ def registererror() -> str:
     return render_template('registererror.html')
     # Replace with a proper HTML template if necessary
 
+
 @app.route('/registersuccess')
+@login_required
 def registersuccess() -> str:
     return render_template('registersuccess.html')
     # Replace with a proper HTML template if necessary
+
+
+@app.route("/logout")
+@login_required
+def logout() -> str:
+    logout_user()
+    return render_template('logout.html')
 
 
 if __name__ == "__main__":

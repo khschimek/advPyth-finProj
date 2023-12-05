@@ -16,7 +16,7 @@
     <nav class="navbar navbar-dark" style="background-color: #1e92bd;">
         <div class="container-fluid">
             <a class="navbar-brand">Python Weather App</a>
-            <!--
+            
             <div class="weather-info">
                 <p>New York City</p>
                 <p>{{ weather_data['ny'].temperature | round | int }}°F</p>
@@ -25,12 +25,12 @@
                 <p>Chicago</p>
                 <p>{{ weather_data['ch'].temperature | round | int }}°F</p>
             </div>
-            -->
+            
             <form class="d-flex flex-grow-1 mx-4" style="max-width: 400px;" action="/dashboard" method="post">
                 <input class="form-control me-2" type="search" placeholder="City Name" id="cityName" name="cityName">
                 <button class="btn btn-outline-light">Search</button>
             </form>
-            <!--
+            
             <div class="weather-info">
                 <p>Denver</p>
                 <p>{{ weather_data['de'].temperature | round | int }}°F</p>
@@ -39,10 +39,16 @@
                 <p>Los Angeles</p>
                 <p>{{ weather_data['la'].temperature | round | int }}°F</p>
             </div>
-            -->
+            
+            {% if current_user.is_authenticated %}
+            <form class="d-flex" action="/logout">
+                <button class="btn btn-outline-light" type="submit">Logout</button>
+            </form>
+            {% else %}
             <form class="d-flex" action="/login">
                 <button class="btn btn-outline-light" type="submit">Login</button>
             </form>
+            {% endif %}
         </div>
     </nav>
     <div class="text-center">
